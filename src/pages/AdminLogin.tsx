@@ -9,6 +9,9 @@ import ProductActions from "../components/admin/ProductActions";
 import ViewProduct from "../components/admin/ViewProduct";
 import ProductModal from "../components/admin/EditProductModal";
 import AddProductModal from "../components/admin/AddProductModal";
+import { useForm } from "react-hook-form";
+import styles from '../assets/AdminLogin.module.css';
+import AdminHeader from '../components/admin/layout/AdminHeader';
 
 // API 基礎網址設定
 const API_BASE = import.meta.env.VITE_API_URL;
@@ -19,6 +22,12 @@ const API_PATH = import.meta.env.VITE_API_PATH;
 const ReactSwal = withReactContent(Swal);
 
 function AdminLogin() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginFormData>();
+
   // 表單資料狀態，用於存儲使用者名稱和密碼
   const [formData, setFormData] = useState<LoginFormData>({
     username: "",
@@ -68,12 +77,10 @@ function AdminLogin() {
     }));
   };
 
-  // 處理登入表單提交的非同步函式
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  // 處理表單提交
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      const response = await axios.post(`${API_BASE}/admin/signin`, formData);
+      const response = await axios.post(`${API_BASE}/admin/signin`, data);
       const { token, expired } = response.data;
       document.cookie = `hexToken=${token};expires=${new Date(expired)}; path=/`;
       axios.defaults.headers.common.Authorization = token;
@@ -152,162 +159,185 @@ function AdminLogin() {
     getData(page);
   };
 
+  // 處理登出
+  const handleLogout = () => {
+    setIsAuth(false);
+    // 可以在這裡添加其他清理工作
+  };
+
   // 渲染 UI
   return (
     <>
       {/* 使用條件渲染：已登入顯示產品列表，未登入顯示登入表單 */}
       {isAuth ? (
-        // 已登入狀態的 UI
-        <div className="container p-5">  {/* 改用 container-fluid 讓表格更寬 */}
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2>產品列表</h2>
-            <button
-              className="btn btn-primary"
-              onClick={() => setShowAddModal(true)}
-            >
-              新增商品
-            </button>
-          </div>
+        <>
+          <AdminHeader onLogout={handleLogout} />
+          <div className="container p-5">  {/* 改用 container-fluid 讓表格更寬 */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h2>產品列表</h2>
+              <button
+                className="btn btn-primary"
+                onClick={() => setShowAddModal(true)}
+              >
+                新增商品
+              </button>
+            </div>
 
-          {/* 產品列表表格 */}
-          <table className="table align-middle">
-            <thead>
-              <tr>
-                <th>縮圖</th>
-                <th>產品名稱</th>
-                <th>分類</th>
-                <th>單位</th>
-                <th>原價</th>
-                <th>售價</th>
-                <th>是否啟用</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id}>
-                  <td className="align-middle">
-                    {product.imageUrl && (
-                      <img
-                        src={product.imageUrl}
-                        alt={product.title}
-                        className="img-thumbnail"
-                        style={{
-                          width: '80px',
-                          height: '80px',
-                          objectFit: 'contain'
-                        }}
-                      />
-                    )}
-                  </td>
-                  <td className="align-middle">{product.title}</td>
-                  <td className="align-middle">{product.category}</td>
-                  <td className="align-middle">{product.unit}</td>
-                  <td className="align-middle">{product.origin_price}</td>
-                  <td className="align-middle">{product.price}</td>
-                  <td className="align-middle">
-                    <span
-                      className={`badge ${product.is_enabled ? 'bg-success' : 'bg-danger'}`}
-                      style={{ fontSize: '0.9rem', padding: '8px 12px' }}  // 調整大小和間距
-                    >
-                      {product.is_enabled ? '啟用' : '未啟用'}
-                    </span>
-                  </td>
-                  <td className="align-middle">
-                    <ProductActions
-                      product={product}
-                      onEdit={handleEdit}
-                      onView={(product) => {
-                        setTempProduct(product);
-                        setShowDetailModal(true);
-                      }}
-                      onDelete={() => getData()}
-                    />
-                  </td>
+            {/* 產品列表表格 */}
+            <table className="table align-middle">
+              <thead>
+                <tr>
+                  <th>縮圖</th>
+                  <th>產品名稱</th>
+                  <th>分類</th>
+                  <th>單位</th>
+                  <th>原價</th>
+                  <th>售價</th>
+                  <th>是否啟用</th>
+                  <th>操作</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product.id}>
+                    <td className="align-middle">
+                      {product.imageUrl && (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.title}
+                          className="img-thumbnail"
+                          style={{
+                            width: '80px',
+                            height: '80px',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      )}
+                    </td>
+                    <td className="align-middle">{product.title}</td>
+                    <td className="align-middle">{product.category}</td>
+                    <td className="align-middle">{product.unit}</td>
+                    <td className="align-middle">{product.origin_price}</td>
+                    <td className="align-middle">{product.price}</td>
+                    <td className="align-middle">
+                      <span
+                        className={`badge ${product.is_enabled ? 'bg-success' : 'bg-danger'}`}
+                        style={{ fontSize: '0.9rem', padding: '8px 12px' }}  // 調整大小和間距
+                      >
+                        {product.is_enabled ? '啟用' : '未啟用'}
+                      </span>
+                    </td>
+                    <td className="align-middle">
+                      <ProductActions
+                        product={product}
+                        onEdit={handleEdit}
+                        onView={(product) => {
+                          setTempProduct(product);
+                          setShowDetailModal(true);
+                        }}
+                        onDelete={() => getData()}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-          {/* 商品詳情 Modal */}
-          <ViewProduct
-            product={tempProduct!}
-            show={showDetailModal}
-            onClose={() => setShowDetailModal(false)}
-          />
-
-          {/* 新增商品 Modal */}
-          <AddProductModal
-            showModal={showAddModal}
-            onClose={() => setShowAddModal(false)}
-            onSuccess={() => {
-              setShowAddModal(false);
-              getData();  // 重新取得資料
-            }}
-          />
-
-          {/* 編輯商品 Modal */}
-          <ProductModal
-            showModal={showEditModal}
-            onClose={handleCloseModal}
-            onSuccess={() => {
-              setShowEditModal(false);
-              getData();
-            }}
-            editProduct={editingProduct}
-          />
-
-          {/* 在表格下方加入分頁元件 */}
-          {pagination && (
-            <Pagination
-              pagination={pagination}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
+            {/* 商品詳情 Modal */}
+            <ViewProduct
+              product={tempProduct!}
+              show={showDetailModal}
+              onClose={() => setShowDetailModal(false)}
             />
-          )}
-        </div>
+
+            {/* 新增商品 Modal */}
+            <AddProductModal
+              showModal={showAddModal}
+              onClose={() => setShowAddModal(false)}
+              onSuccess={() => {
+                setShowAddModal(false);
+                getData();  // 重新取得資料
+              }}
+            />
+
+            {/* 編輯商品 Modal */}
+            <ProductModal
+              showModal={showEditModal}
+              onClose={handleCloseModal}
+              onSuccess={() => {
+                setShowEditModal(false);
+                getData();
+              }}
+              editProduct={editingProduct}
+            />
+
+            {/* 在表格下方加入分頁元件 */}
+            {pagination && (
+              <Pagination
+                pagination={pagination}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </div>
+        </>
       ) : (
         // 未登入狀態的 UI：登入表單
-        <div className="container login">
-          <div className="row justify-content-center">
-            <h1 className="h3 mb-3 font-weight-normal">請先登入</h1>
-            <div className="col-8">
-              <form id="form" className="form-signin" onSubmit={handleSubmit}>
-                <div className="form-floating mb-3">
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="username"
-                    placeholder="name@example.com"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    required
-                    autoFocus
-                  />
-                  <label htmlFor="username">Email address</label>
-                </div>
-                <div className="form-floating">
-                  <input
-                    type="password"
-                    className="form-control"
-                    id="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <label htmlFor="password">Password</label>
-                </div>
-                <button
-                  className="btn btn-lg btn-primary w-100 mt-3"
-                  type="submit"
-                >
-                  登入
-                </button>
-              </form>
-            </div>
+        <div className={styles.loginContainer}>
+          <div className={styles.loginCard}>
+            <h1 className={styles.loginTitle}>管理員登入</h1>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className={styles.formGroup}>
+                <input
+                  type="email"
+                  className={styles.input}
+                  placeholder=" "
+                  {...register("username", {
+                    required: "請輸入電子郵件",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "請輸入有效的電子郵件"
+                    }
+                  })}
+                />
+                <label className={styles.label}>電子郵件</label>
+                {errors.username && (
+                  <div className={styles.errorMessage}>
+                    {errors.username.message}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.formGroup}>
+                <input
+                  type="password"
+                  className={styles.input}
+                  placeholder=" "
+                  {...register("password", {
+                    required: "請輸入密碼",
+                    minLength: {
+                      value: 6,
+                      message: "密碼至少需要6個字元"
+                    }
+                  })}
+                />
+                <label className={styles.label}>密碼</label>
+                {errors.password && (
+                  <div className={styles.errorMessage}>
+                    {errors.password.message}
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className={styles.submitButton}
+              >
+                登入
+              </button>
+            </form>
+            <p className={styles.copyright}>&copy; 2024 六角學院</p>
           </div>
-          <p className="mt-5 mb-3 text-muted">&copy; 2024~∞ - 六角學院</p>
         </div>
       )}
     </>

@@ -1,0 +1,98 @@
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.loginCard {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 450px;
+  margin: 2rem auto;
+}
+
+.loginTitle {
+  color: #2d3748;
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.label {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #718096;
+  transition: all 0.3s;
+  pointer-events: none;
+}
+
+.input:focus ~ .label,
+.input:not(:placeholder-shown) ~ .label {
+  top: 0;
+  transform: translateY(-50%) scale(0.85);
+  background: white;
+  padding: 0 0.5rem;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.submitButton:hover {
+  background: #5a67d8;
+  transform: translateY(-1px);
+}
+
+.submitButton:active {
+  transform: translateY(1px);
+}
+
+.errorMessage {
+  color: #e53e3e;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.copyright {
+  text-align: center;
+  color: white;
+  margin-top: 2rem;
+  font-size: 0.875rem;
+} 

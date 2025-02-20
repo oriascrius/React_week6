@@ -9,7 +9,7 @@ function App() {
   return (
     <Provider store={store}>
       {/* <CartProvider> */}
-        <BrowserRouter basename="/React_week5">
+        <BrowserRouter basename="/React_week6">
           <Routes>
             {/* 前台路由 */}
             <Route path="/*" element={<FrontStore />} />

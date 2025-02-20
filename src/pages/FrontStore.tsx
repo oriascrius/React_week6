@@ -6,6 +6,7 @@ import Cart from '../components/front/cart/Cart';
 import CheckoutForm from '../components/front/checkout/CheckoutForm';
 import Success from '../components/front/success/Success';
 import Order from '../components/front/orders/OrderList'
+import Home from '../components/front/home/Home';
 
 function FrontStore() {
   return (
@@ -13,6 +14,7 @@ function FrontStore() {
       <Header />
       <main className="flex-fill">
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<CheckoutForm />} />

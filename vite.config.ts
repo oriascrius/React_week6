@@ -5,7 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 // 設定 base 路徑
 export default defineConfig({
-  base: '/React_week5/',
+  base: '/React_week6/',
   plugins: [react()],
   resolve: {
     alias: {
