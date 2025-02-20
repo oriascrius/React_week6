@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent, ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -65,16 +65,6 @@ function AdminLogin() {
     } catch (error) {
       console.error('API 錯誤:', error);
     }
-  };
-
-  // 處理表單輸入變更的函式
-  // 當使用者在輸入框中輸入時觸發
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
   };
 
   // 處理表單提交
