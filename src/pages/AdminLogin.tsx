@@ -28,12 +28,6 @@ function AdminLogin() {
     formState: { errors }
   } = useForm<LoginFormData>();
 
-  // 表單資料狀態，用於存儲使用者名稱和密碼
-  const [formData, setFormData] = useState<LoginFormData>({
-    username: "",
-    password: "",
-  });
-
   // 管理登入狀態的 state，true 表示已登入，false 表示未登入
   const [isAuth, setIsAuth] = useState<boolean>(false);
 
